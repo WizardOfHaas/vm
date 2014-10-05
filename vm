@@ -1,0 +1,44 @@
+#!/usr/bin/perl
+
+use warnings;
+use strict;
+
+my $ip = 0;
+
+my @regs = (0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+
+my @mem = ((0) x 1024);
+
+my @jmp_stack;
+
+open CODE, '<', $ARGV[0];
+binmode(CODE);
+my @code;
+while(<CODE>)
+{
+    push(@code, unpack('C*', $_));
+}
+
+while($ip <= $#code)
+{
+    my @in = ($code[$ip], $code[$ip+1], $code[$ip+2], $code[$ip+3]);
+    print join('|', @in)."\n";
+    
+    if($in[0] == ord('=')){#mov
+	if($in[1] == 0){
+	    $regs[$in[2]] = $in[3];
+	}else{
+	    $mem[$in[2]] = $in[3];
+	}
+    }elsif($in[0] == ord('+')){#add
+	if($in[1] == 0){
+	    $regs[$in[2]] += $in[3];
+	}else{
+	    $mem[$in[2]] += $in[3];
+	}
+    }
+    
+    print join("|", @regs)."\n";
+
+    $ip += 4;
+}
