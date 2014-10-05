@@ -7,7 +7,7 @@ my $ip = 0;
 
 my @regs = (0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 
-my @mem = ((0) x 1024);
+my @mem = ((0) x 64);
 
 my @jmp_stack;
 
@@ -25,20 +25,55 @@ while($ip <= $#code)
     print join('|', @in)."\n";
     
     if($in[0] == ord('=')){#mov
-	if($in[1] == 0){
-	    $regs[$in[2]] = $in[3];
-	}else{
-	    $mem[$in[2]] = $in[3];
-	}
+	&op(\&mov, @in);
     }elsif($in[0] == ord('+')){#add
-	if($in[1] == 0){
-	    $regs[$in[2]] += $in[3];
-	}else{
-	    $mem[$in[2]] += $in[3];
-	}
+	&op(\&add, @in);
+    }elsif($in[0] == ord('-')){#sub
+	&op(\&dif, @in);
     }
+
     
     print join("|", @regs)."\n";
+    print join("|", @mem)."\n";
 
     $ip += 4;
+}
+
+sub op
+{
+    my @in;
+    (my $code, $in[0], $in[1], $in[2], $in[3]) = @_;
+    
+    if($in[1] == 0){ #reg = num
+	$regs[$in[2]] = $code->($regs[$in[2]], $in[3]);
+    }elsif($in[1] == 1){ #mem = num
+	$mem[$in[2]] = $code->($mem[$in[2]], $in[3]);
+    }elsif($in[1] == 2){ #reg = mem
+	$regs[$in[2]] = $code->($regs[$in[2]], $mem[$in[3]]);
+    }elsif($in[1] == 3){ #reg = reg
+	$regs[$in[2]] = $code->($regs[$in[2]], $regs[$in[3]]);
+    }elsif($in[1] == 4){ #mem = reg
+	$mem[$in[2]] = $code->($mem[$in[2]], $regs[$in[3]]);
+    }    
+}
+
+sub mov
+{
+    my ($a, $b) = @_;
+
+    return $b;
+}
+
+sub add
+{
+    my ($a, $b) = @_;
+
+    return $a + $b;
+}
+
+sub dif
+{
+    my ($a, $b) = @_;
+
+    return $a - $b;
 }
