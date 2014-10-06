@@ -1,4 +1,4 @@
-= mov
+<code>= mov
 + add
 - sub
 
@@ -10,4 +10,4 @@ Adress modes:
 04 - mem op reg
 
 Registers:
-0-F
+0-F</code>
