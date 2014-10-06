@@ -34,7 +34,7 @@ while($ip <= $#code)
 
     
     print join("|", @regs)."\n";
-    print join("|", @mem)."\n";
+    print join("|", @mem)."\n\n";
 
     $ip += 4;
 }
@@ -44,17 +44,23 @@ sub op
     my @in;
     (my $code, $in[0], $in[1], $in[2], $in[3]) = @_;
     
-    if($in[1] == 0){ #reg = num
-	$regs[$in[2]] = $code->($regs[$in[2]], $in[3]);
-    }elsif($in[1] == 1){ #mem = num
-	$mem[$in[2]] = $code->($mem[$in[2]], $in[3]);
-    }elsif($in[1] == 2){ #reg = mem
-	$regs[$in[2]] = $code->($regs[$in[2]], $mem[$in[3]]);
-    }elsif($in[1] == 3){ #reg = reg
-	$regs[$in[2]] = $code->($regs[$in[2]], $regs[$in[3]]);
-    }elsif($in[1] == 4){ #mem = reg
-	$mem[$in[2]] = $code->($mem[$in[2]], $regs[$in[3]]);
-    }    
+    if($in[1] == 0){ #reg = num #case 0
+	$regs[$in[2]] = $code->($regs[$in[2]], $in[3]); # mov ax, 5
+    }elsif($in[1] == 1){ #mem = num #case 1
+	$mem[$in[2]] = $code->($mem[$in[2]], $in[3]); # mov [0x100], 5
+    }elsif($in[1] == 2){ #reg = mem #case 2
+	$regs[$in[2]] = $code->($regs[$in[2]], $mem[$in[3]]); # mov ax, [0x100]
+    }elsif($in[1] == 3){ #reg = reg #case 3
+	$regs[$in[2]] = $code->($regs[$in[2]], $regs[$in[3]]); # mov ax, bx
+    }elsif($in[1] == 4){ #mem = reg #case 4
+	$mem[$in[2]] = $code->($mem[$in[2]], $regs[$in[3]]); # mov [0x100], ax
+    }elsif($in[1] == 5){ #mem@reg pointer = num #case 5
+	$mem[$regs[$in[2]]] = $code->($regs[$in[2]], $in[3]); # mov [si], 5
+    }elsif($in[1] == 6){ #mem@reg pointer = reg #casr 6
+	$mem[$regs[$in[2]]] = $code->($regs[$in[2]], $regs[$in[3]]); # mov [si], ax
+    }elsif($in[1] == 7){ #reg = mem@reg pointer #case 7
+	$regs[$in[2]] = $code->($regs[$in[2]], $mem[$regs[$in[3]]]); # mov ax, [si]
+    }
 }
 
 sub mov
