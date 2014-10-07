@@ -33,6 +33,9 @@ while($ip <= $#code)
 	&op(\&dif, @in);
     }elsif($in[0] == ord('?')){#cmp
 	&cmp(@in);
+    }elsif($in[0] == ord('>')){#push
+	$regs[15]++;
+	$mem[$regs[15]] = $op[2];
     }
     
     print 'reg:'.join("|", @regs)."\n";

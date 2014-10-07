@@ -39,7 +39,7 @@ while(<CODE>)
 
 for my $i(0..$#bin)
 {
-    if($bin[$i] =~ m/^0x|\#/){
+    if($bin[$i] =~ m/^0x|\#|[A-Za-z]/){
 	$bin[$i] =~ s/0x|\#//g;	
 	$bin[$i] = hex($bin[$i]);
     }
