@@ -62,9 +62,9 @@ sub op
     }elsif($in[1] == 4){ #mem = reg #case 4
 	$mem[$in[2]] = $code->($mem[$in[2]], $regs[$in[3]]); # mov [0x100], r1
     }elsif($in[1] == 5){ #mem@reg pointer = num #case 5
-	$mem[$regs[$in[2]]] = $code->($regs[$in[2]], $in[3]); # mov [r1], 5
+	$mem[$regs[$in[2]]] = $code->($mem[$regs[$in[2]]], $in[3]); # mov [r1], 5
     }elsif($in[1] == 6){ #mem@reg pointer = reg #casr 6
-	$mem[$regs[$in[2]]] = $code->($regs[$in[2]], $regs[$in[3]]); # mov [r0], r1
+	$mem[$regs[$in[2]]] = $code->($mem[$regs[$in[2]]], $regs[$in[3]]); # mov [r0], r1
     }elsif($in[1] == 7){ #reg = mem@reg pointer #case 7
 	$regs[$in[2]] = $code->($regs[$in[2]], $mem[$regs[$in[3]]]); # mov r0, [r1]
     }
