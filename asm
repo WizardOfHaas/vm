@@ -21,16 +21,29 @@ while(<CODE>)
 
 	if($ops[0] eq 'mov'){
 	    push(@out, ord('='));
+	    push(@out, &getCase($loc));
+	    push(@out, &getArgs($loc));
 	}elsif($ops[0] eq 'add'){
 	    push(@out, ord('+'));
+	    push(@out, &getCase($loc));
+	    push(@out, &getArgs($loc));
 	}elsif($ops[0] eq 'sub'){
 	    push(@out, ord('-'));
+	    push(@out, &getCase($loc));
+	    push(@out, &getArgs($loc));
 	}elsif($ops[0] eq 'cmp'){
 	    push(@out, ord('?'));
+	    push(@out, &getCase($loc));
+	    push(@out, &getArgs($loc));
+	}elsif($ops[0] eq 'push'){
+	    push(@out, ord('>'));
+	    push(@out, &getCaseSingle($loc));
+	    push(@out, &getArgSingle($loc));
+	}elsif($ops[0] eq 'pop'){
+	    push(@out, ord('<'));
+	    push(@out, &getCaseSingle($loc));
+	    push(@out, &getArgSingle($loc));
 	}
-
-	push(@out, &getCase($loc));
-	push(@out, &getArgs($loc));
 
 	push(@out, (0) x (4 - @out));
 	push(@bin, @out);
@@ -45,6 +58,42 @@ for my $i(0..$#bin)
     }
     
     print BIN pack('C', $bin[$i]);
+}
+
+sub getCaseSingle
+{
+    my $loc = $_[0];
+    my @op = split(" ", $loc);
+
+    if($op[1] =~ m/^[0-9\#]/){
+	return 0;
+    }elsif($op[1] =~ m/^r/){
+	return 1;
+    }elsif($op[1] =~ m/^\[r/){
+	return 2;
+    }elsif($op[1] =~ m/^\[[0-9\#]/){
+	return 3;
+    }
+}
+
+sub getArgSingle
+{
+    my $loc = $_[0];
+    my @op = split(" ", $loc);
+
+    if($op[1] =~ m/^[0-9\#]/){
+	return $op[1];
+    }elsif($op[1] =~ m/^r/){
+	$op[1] =~ s/r//g;
+	return $op[1];
+    }elsif($op[1] =~ m/^\[r/){
+	$op[1] =~ s/\[r//g;
+	$op[1] =~ s/\]//g;
+	return $op[1];
+    }elsif($op[1] =~ m/^\[[0-9\#]/){
+	$op[1] =~ s/\[|\]//g;
+	return $op[1];
+    }
 }
 
 sub getCase
