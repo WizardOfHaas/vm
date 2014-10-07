@@ -3,32 +3,38 @@
 use warnings;
 use strict;
 
-open CODE, '<', $ARGV[0];
-open BIN, '>:raw', $ARGV[1];
+open CODE, '<', $ARGV[0] or die;
+#open BIN, '>:raw', $ARGV[1];
+open BIN, '>', $ARGV[1] or die;
 
 my @bin;
 
 while(<CODE>)
 {
-    my $loc = $_;
-    $loc =~ s/^\s+|\s+$//g;
-    my @ops = split(' ', $loc);
+    if(/^$/){
+    }else{
+	my $loc = $_;
+	$loc =~ s/^\s+|\s+$//g;
+	my @ops = split(' ', $loc);
 
-    my @out;
+	my @out;
 
-    if($ops[0] eq 'mov'){
-	push(@out, ord('='));
-    }elsif($ops[0] eq 'add'){
-	push(@out, ord('+'));
-    }elsif($ops[0] eq 'sub'){
-	push(@out, ord('-'));
+	if($ops[0] eq 'mov'){
+	    push(@out, ord('='));
+	}elsif($ops[0] eq 'add'){
+	    push(@out, ord('+'));
+	}elsif($ops[0] eq 'sub'){
+	    push(@out, ord('-'));
+	}elsif($ops[0] eq 'cmp'){
+	    push(@out, ord('?'));
+	}
+
+	push(@out, &getCase($loc));
+	push(@out, &getArgs($loc));
+
+	push(@out, (0) x (4 - @out));
+	push(@bin, @out);
     }
-
-    push(@out, &getCase($loc));
-    push(@out, &getArgs($loc));
-
-    push(@out, (0) x (4 - @out));
-    push(@bin, @out);
 }
 
 for my $i(0..$#bin)
@@ -38,7 +44,7 @@ for my $i(0..$#bin)
 	$bin[$i] = hex($bin[$i]);
     }
     
-    print BIN pack('s<', $bin[$i]);
+    print BIN pack('C', $bin[$i]);
 }
 
 sub getCase
