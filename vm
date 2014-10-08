@@ -37,6 +37,7 @@ while($ip <= $#code)
 	&push(@in);
     }elsif($in[0] == ord('<')){#pop
 	&pop(@in);
+    }elsif($in[0] == ord('^')){#jmp
     }
     
     print 'reg:'.join("|", @regs)."\n";
