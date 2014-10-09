@@ -38,6 +38,7 @@ while($ip <= $#code)
     }elsif($in[0] == ord('<')){#pop
 	&pop(@in);
     }elsif($in[0] == ord('^')){#jmp
+	&jmp(@in);
     }
     
     print 'reg:'.join("|", @regs)."\n";
@@ -140,6 +141,25 @@ sub cmp
 	    $flags[0] = 3;
 	}
     }    
+}
+
+sub jmp
+{
+    my @in = @_;
+
+    if($in[1] == 0){
+	&jmp_conds($in[2], $in[3]); # jmp 5
+    }elsif($in[1] == 1){
+	&jmp_cond($in[2], $regs[$in[3]]); # jmp r0
+    }elsif($in[1] == 2){
+	&jmp_cond($in[2], $mem[$regs[$in[3]]]); # jmp [r0]
+    }elsif($in[1] == 3){
+	&jmp_cond($in[2], $mem[$in[3]]); #jmp [5]
+    }
+}
+
+sub jmp_cond
+{
 }
 
 sub push
