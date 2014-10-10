@@ -160,6 +160,20 @@ sub jmp
 
 sub jmp_cond
 {
+    my ($cond, $arg) = @_;
+
+    if($cond == 0){ # jmp
+	
+    }elsif($cond == 1){ # je
+	
+    }elsif($cond == 2){ # jne
+
+    }elsif($cond == 3){ # jl
+	
+    }elsif($cond == 4){ # jg
+	
+    }elsif($cond == 5){ # jz
+    }
 }
 
 sub push
